@@ -192,7 +192,8 @@ public class BatchReimbursementExport extends BatchStrategy {
 
           log.debug("Tiers n° {}", partner.getName());
 
-          List<MoveLine> moveLineList =
+          List<MoveLine> moveLineList = null;
+          Query<MoveLine> moveLineQuery =
               moveLineRepo
                   .all()
                   .filter(
@@ -203,24 +204,26 @@ public class BatchReimbursementExport extends BatchStrategy {
                       MoveRepository.STATUS_DAYBOOK,
                       partnerRepository.find(partner.getId()),
                       companyRepo.find(company.getId()),
-                      MoveLineRepository.REIMBURSEMENT_STATUS_NULL)
-                  .fetch();
+                      MoveLineRepository.REIMBURSEMENT_STATUS_NULL);
 
           log.debug("Liste des trop perçus : {}", moveLineList);
+          int moveLineOffset = 0;
+          while (!(moveLineList = moveLineQuery.fetch(fetchLimit, moveLineOffset)).isEmpty()) {
+            moveLineOffset += moveLineList.size();
+            if (moveLineList != null && !moveLineList.isEmpty()) {
 
-          if (moveLineList != null && !moveLineList.isEmpty()) {
-
-            Reimbursement reimbursement =
-                reimbursementExportService.runCreateReimbursement(
-                    moveLineList,
-                    companyRepo.find(company.getId()),
-                    partnerRepository.find(partner.getId()));
-            if (reimbursement != null) {
-              updateReimbursement(reimbursementRepo.find(reimbursement.getId()));
-              this.totalAmount =
-                  this.totalAmount.add(
-                      reimbursementRepo.find(reimbursement.getId()).getAmountToReimburse());
-              i++;
+              Reimbursement reimbursement =
+                  reimbursementExportService.runCreateReimbursement(
+                      moveLineList,
+                      companyRepo.find(company.getId()),
+                      partnerRepository.find(partner.getId()));
+              if (reimbursement != null) {
+                updateReimbursement(reimbursementRepo.find(reimbursement.getId()));
+                this.totalAmount =
+                    this.totalAmount.add(
+                        reimbursementRepo.find(reimbursement.getId()).getAmountToReimburse());
+                i++;
+              }
             }
           }
         } catch (AxelorException e) {
