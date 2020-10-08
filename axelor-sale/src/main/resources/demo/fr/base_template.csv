@@ -24,3 +24,11 @@ $SaleOrder.saleOrderLineList:{ line | <li>$line.productName$ x$line.qty$ for $li
 <p>Best regards<br/>
 $SaleOrder.user.partner.firstName$ $SaleOrder.user.partner.name$</p>
 ";"$SaleOrder.clientPartner.emailAddress.address$";;;2
+"Sale order update template";"SaleOrder";2;;;;"true";;"$SaleOrder.company.name$ - $SaleOrder.saleOrderSeq$ a été actualisé";"<p>Bonjour $username$,</p> 
+<p>$SaleOrder.saleOrderSeq$ a été récemment actualisé, veuillez trouver ci-dessous les modifications effectuées.</p>
+<p>Status : </p>
+<ul>
+$tracks:{ line | <li> <strong>$line.title$</strong> : <span>$line.oldDisplayValue$</span> &raquo; <span>$line.displayValue$</span> </li>}$
+</ul>
+<p>Commentaire : $SaleOrder.description$</p>
+";;;;2
