@@ -126,7 +126,7 @@
             <field name="source" colSpan="4" canEdit="false" form-view="source-form" grid-view="source-grid"/>
             <field name="expectedCloseDate" colSpan="4" readonlyIf="salesStageSelect == 5 || salesStageSelect == 6"/>
             <field name="nextStep" colSpan="12" readonlyIf="salesStageSelect == 5 || salesStageSelect == 6"/>
-            <field name="probability" colSpan="4" readonlyIf="salesStageSelect == 5 || salesStageSelect == 6" widget="Progress"/>
+            <field name="probability" colSpan="4" readonlyIf="salesStageSelect == 5 || salesStageSelect == 6" widget="SelectProgress"/>
             <field name="currency" colSpan="4" canEdit="false" form-view="currency-form" grid-view="currency-grid"/>
             <panel name="caseDetailsPanel" readonlyIf="salesStageSelect == 5 || salesStageSelect == 6" colSpan="12">
                 <field name="amount" colSpan="4"/>

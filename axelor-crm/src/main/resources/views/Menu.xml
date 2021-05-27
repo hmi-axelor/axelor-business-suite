@@ -91,6 +91,23 @@
 		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserService:getUserActiveTeam()"/>
 		<context name="todayDate" expr="eval:__config__.app.getTodayDate(__user__.activeCompany)" />
 	</action-view>
+	
+	<menuitem name="crm-root-top-opportunity" parent="crm-root"
+		title="Top opportunities" action="crm.root.top.opportunity" order="21"/>
+
+	<action-view name="crm.root.top.opportunity" title="Top opportunities"
+		model="com.axelor.apps.crm.db.Opportunity" home="true">
+		<view type="kanban" name="opportunity-kanban"/>
+		<view type="grid" name="opportunity-grid"/>
+		<view type="form" name="opportunity-form"/>
+		<view-param name="search-filters" value="opportunity-filters"/>
+		<domain>self.amount &gt;= :_amount</domain>
+		<context name="_amount" expr="eval:__config__.app.getApp('crm').getMinAmtTopOpportunities()"/>
+		<context name="_internalUserId" expr="eval:__user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserService:getUserActiveTeam()"/>
+		<context name="todayDate" expr="eval:__config__.app.getTodayDate()" />
+	</action-view>
+	
 
 	<menuitem name="crm-root-meeting-my-calendar" parent="menu-calendar"
 		title="My CRM events" action="crm.root.meeting.my.calendar" order="2" />

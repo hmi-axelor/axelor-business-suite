@@ -22,6 +22,8 @@ import com.axelor.apps.base.db.Batch;
 import com.axelor.apps.base.service.app.AppBaseService;
 import com.axelor.apps.base.service.app.AppService;
 import com.axelor.apps.contract.db.Contract;
+import com.axelor.apps.contract.db.ContractBatch;
+import com.axelor.apps.contract.db.repo.ContractBatchRepository;
 import com.axelor.apps.contract.db.repo.ContractRepository;
 import com.axelor.apps.contract.exception.IExceptionMessage;
 import com.axelor.apps.contract.service.ContractService;
@@ -36,15 +38,15 @@ import com.axelor.exception.service.TraceBackService;
 import com.axelor.i18n.I18n;
 import com.axelor.inject.Beans;
 import com.google.inject.Inject;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
-public class BatchContractFactoryInvoicing extends BatchContractFactory {
+public class BatchContractFactoryReminderEndContracts extends BatchContractFactory {
 
   protected TemplateMessageService templateMessageService;
   protected MessageService messageService;
 
   @Inject
-  public BatchContractFactoryInvoicing(
+  public BatchContractFactoryReminderEndContracts(
       ContractRepository repository,
       ContractService service,
       AppBaseService baseService,
@@ -56,31 +58,37 @@ public class BatchContractFactoryInvoicing extends BatchContractFactory {
   }
 
   @Override
-  public Query<Contract> prepare(Batch batch) {
+  Query<Contract> prepare(Batch batch) {
+    ContractBatch contractBatch = batch.getContractBatch();
+    LocalDate todayDate = baseService.getTodayDate(batch.getContractBatch().getCompany());
+    LocalDate endDate;
+    if (contractBatch.getDurationTypeSelect()
+        == ContractBatchRepository.CONTRACT_DURATION_TYPE_MONTHS) {
+      endDate = todayDate.plusMonths(contractBatch.getDuration());
+    } else if (contractBatch.getDurationTypeSelect()
+        == ContractBatchRepository.CONTRACT_DURATION_TYPE_WEEKS) {
+      endDate = todayDate.plusWeeks(contractBatch.getDuration());
+    } else {
+      endDate = todayDate.plusDays(contractBatch.getDuration());
+    }
     return repository
         .all()
         .filter(
-            "self.isInvoicingManagement = TRUE "
-                + "AND self.currentContractVersion.automaticInvoicing = TRUE "
-                + "AND self.invoicingDate <= :date "
+            "self.currentContractVersion.supposedEndDate BETWEEN :todayDate AND :endDate "
+                + "AND self.statusSelect = :status "
+                + "AND self.targetTypeSelect = :contractType "
                 + "AND :batch NOT MEMBER of self.batchSet")
-        .bind(
-            "date",
-            baseService
-                .getTodayDate(batch.getContractBatch().getCompany())
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .bind("todayDate", todayDate)
+        .bind("endDate", endDate)
+        .bind("contractType", contractBatch.getContractTypeSelect())
+        .bind("status", ContractRepository.ACTIVE_CONTRACT)
         .bind("batch", batch);
   }
 
   @Override
-  public void process(Contract contract) throws AxelorException {
-    service.invoicingContract(contract);
-    sendEmail(contract);
-  }
-
-  public void sendEmail(Contract contract) throws AxelorException {
+  void process(Contract contract) throws AxelorException {
     AppContract contractApp = (AppContract) Beans.get(AppService.class).getApp("contract");
-    Template template = contractApp.getContractInvoicingReminderTemplate();
+    Template template = contractApp.getContractReminderTemplate();
     if (template != null) {
       String model = template.getMetaModel().getFullName();
       String tag = template.getMetaModel().getName();

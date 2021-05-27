@@ -16,7 +16,7 @@
     <decimal name="bestCase" title="Best case"/>
     <decimal name="worstCase" title="Worst case"/>
     <integer name="salesStageSelect" title="Sales stage" selection="crm.opportunity.sales.stage.select"/>
-    <decimal name="probability" title="Probability (%)"/>
+    <decimal name="probability" title="Probability (%)" selection="crm.opportunity.probability.select" default="50.00"/>
     <string name="nextStep" title="Next step"/>
     <string name="description" large="true" title="Description"/>
     <string name="customerDescription" large="true" title="Customer Description"/>

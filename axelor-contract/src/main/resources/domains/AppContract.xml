@@ -16,6 +16,9 @@
 
 		<boolean name="isConfigContract" title="Configurable contract" />
 
+		<many-to-one name="contractReminderTemplate" ref="com.axelor.apps.message.db.Template" title="Contract Reminder Mail Template"/>
+		<many-to-one name="contractInvoicingReminderTemplate" ref="com.axelor.apps.message.db.Template" title="Contract Invoicing Reminder Mail Template"/>
+
 		<track>
 			<field name="isUnchangableContract" on="UPDATE"/>
 			<field name="isAmendmentManagement" on="UPDATE"/>

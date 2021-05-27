@@ -4,7 +4,7 @@
 
 	<menuitem title="Contracts" name="contracts-root" order="-104" if="__config__.app.isApp('contract')" icon="fa-briefcase" icon-background="blue"/>
 
-	<menuitem title="Customer contracts" name="contracts-root-customer-all" action="contracts.root.customer.all" parent="contracts-root"/>
+	<menuitem title="Customer contracts" name="contracts-root-customer-all" action="contracts.root.customer.all" parent="contracts-root" order="1"/>
 
 	<action-view name="contracts.root.customer.all" title="Customer contracts" model="com.axelor.apps.contract.db.Contract">
 		<view type="grid" name="contract-grid"/>
@@ -14,7 +14,7 @@
 		<context name="_xTargetType" expr="eval: 1"/>
 	</action-view>
 
-	<menuitem title="Supplier contracts" name="contracts-root-supplier-all" action="contracts.root.supplier.all" parent="contracts-root"/>
+	<menuitem title="Supplier contracts" name="contracts-root-supplier-all" action="contracts.root.supplier.all" parent="contracts-root" order="2"/>
 
 	<action-view name="contracts.root.supplier.all" title="Supplier contracts" model="com.axelor.apps.contract.db.Contract">
 		<view type="grid" name="contract-grid"/>
@@ -23,8 +23,25 @@
 		<domain>self.targetTypeSelect = 2 AND self.statusSelect != 3</domain>
 		<context name="_xTargetType" expr="eval: 2"/>
 	</action-view>
+	
+	<menuitem name="contracts-root-event-visits" parent="contracts-root" title="Visits" action="contracts.root.event.visits" order="3"/>
+	
+	<action-view name="contracts.root.event.visits" title="Visits"
+		model="com.axelor.apps.crm.db.Event" >
+		<view type="grid" name="event-grid"/>
+		<view type="form" name="event-form"/>
+		<view type="calendar" name="event-calendar-color-by-calendar"/>
+		<view-param name="search-filters" value="event-filters"/>
+		<domain>self.relatedToSelect = :contract</domain>
+		<context name="contract" expr="eval: com.axelor.apps.contract.db.Contract"/>
+		<context name="_currentDate" expr="eval:  __date__"/>
+		<context name="_internalUserId" expr="eval: __user__.id"/>
+		<context name="_myActiveTeam" expr="call:com.axelor.apps.base.service.user.UserService:getUserActiveTeam()"/>
+		<context name="_todayDateTime" expr="eval:__config__.app.getTodayDateTime()"/>
+		<context name="_newDate" expr="eval: __datetime__.plusDays(5)"/>
+	</action-view>
 
-	<menuitem title="Configuration" name="contracts-root-conf-all" parent="contracts-root" icon="fa-cog"/>
+	<menuitem title="Configuration" name="contracts-root-conf-all" parent="contracts-root" icon="fa-cog" order="4"/>
 
 	<menuitem title="Terminated contracts" name="contracts-root-conf-terminated" action="contracts.root.conf.terminated" parent="contracts-root-conf-all"/>
 

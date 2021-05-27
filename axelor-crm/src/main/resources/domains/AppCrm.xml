@@ -8,6 +8,7 @@
 	<integer name="assignableUsers" title="Assignable Users" selection="crm.app.crm.assignable.user.select"/>
 	<many-to-many name="groupsAssignable" title="Groups Assignable" ref="com.axelor.auth.db.Group"/>
 		<boolean name="displayCustomerDescriptionInOpportunity" title="Display customer description in opportunity"/>
+	<decimal name="minAmtTopOpportunities" title="Minimum amount top opportunities"/>
 
 		<track>
 			<field name="assignableUsers" on="UPDATE"/>

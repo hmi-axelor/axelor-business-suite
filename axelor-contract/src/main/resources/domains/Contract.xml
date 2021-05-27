@@ -49,6 +49,8 @@
 
 		<many-to-many name="batchSet" ref="com.axelor.apps.base.db.Batch" title="Batches"/>
 
+		<many-to-one name="assignedTo" ref="com.axelor.auth.db.User" title="Assigned To"/>
+
 		<extra-code><![CDATA[
             static final String CUSTOMER_CONTRACT_SEQUENCE = "customerContract";
             static final String SUPPLIER_CONTRACT_SEQUENCE = "supplierContract";

@@ -165,5 +165,11 @@
 		<option value="11">November</option>
 		<option value="12">December</option>
 	</selection>
+	
+	<selection name="crm.opportunity.probability.select">
+		<option value="50.00">50%</option>
+		<option value="75.00">75%</option>
+		<option value="100.00">100%</option>
+	</selection>
 
 </object-views>
