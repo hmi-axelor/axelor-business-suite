@@ -58,6 +58,11 @@
             	<field name="dataSizeReduction" showIf="formatSelect == 'PDF'" colSpan="4"/>
             	<field name="reportQueryBuilderList"/>	
             </panel>
+            <panel name="docxTypePanel" showIf="inputTypeSelect == 3" colSpan="12">
+            	<field name="docxTemplate" widget="binary-link" colSpan="4"/>           	
+            	<field name="dataSizeReduction" showIf="formatSelect == 'PDF'" colSpan="4"/>
+            	<field name="reportQueryBuilderList"/>	
+            </panel>
         </panel>
     </form>
 

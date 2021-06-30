@@ -43,4 +43,7 @@ dependencies {
 	implementation libs.open_html_pdf_core
 	implementation libs.open_html_pdf_pdfbox
 	implementation libs.jsoup
+	//implementation group: 'org.docx4j', name: 'docx4j-ImportXHTML', version: '3.3.0'
+	//implementation group: 'cn.hutool', name: 'hutool-all', version: '4.6.0'
+
 }

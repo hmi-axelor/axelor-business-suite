@@ -23,6 +23,7 @@ import com.axelor.apps.base.db.Wizard;
 import com.axelor.apps.base.db.repo.PrintTemplateRepository;
 import com.axelor.apps.base.service.PrintService;
 import com.axelor.apps.base.service.PrintTemplateService;
+import com.axelor.apps.base.service.docxreport.DocxReportTemplateService;
 import com.axelor.apps.base.service.excelreport.ExcelReportTemplateService;
 import com.axelor.apps.base.service.imports.listener.ImporterListener;
 import com.axelor.apps.tool.file.PdfTool;
@@ -87,9 +88,9 @@ public class PrintTemplateController {
               createExcelTemplateReport(response, printTemplate, context.getId());
           if (ObjectUtils.notEmpty(view)) {
             response.setView(view);
-          } else if (inputTypeSelect == 3) {
-            // new code here
           }
+        } else if (inputTypeSelect == 3) {
+          createDocxTemplateReport(response, printTemplate, context.getId());
         }
 
       } else if (templatesCount >= 2) {
@@ -131,6 +132,11 @@ public class PrintTemplateController {
         if (ObjectUtils.notEmpty(view)) {
           response.setView(view);
         }
+      } else if (inputTypeSelect == 3) {
+        Map<String, Object> view = createDocxTemplateReport(response, printTemplate, objectId);
+        if (ObjectUtils.notEmpty(view)) {
+          response.setView(view);
+        }
       }
 
     } catch (Exception e) {
@@ -162,6 +168,32 @@ public class PrintTemplateController {
 
     return ActionView.define(I18n.get(printTemplate.getMetaModel().getName()))
         .add("html", fileLink)
+        .map();
+  }
+
+  private Map<String, Object> createDocxTemplateReport(
+      ActionResponse response, PrintTemplate printTemplate, Long objectId)
+      throws ClassNotFoundException, IOException, Exception {
+    if (ObjectUtils.isEmpty(printTemplate.getDocxTemplate())) {
+      response.setFlash("No docx template file selected");
+      return null;
+    }
+    if (!"docx".equals(FilenameUtils.getExtension(printTemplate.getDocxTemplate().getFileName()))) {
+      response.setFlash("Only DOCX file format is allowed");
+      return null;
+    }
+    if (StringUtils.isEmpty(printTemplate.getFormatSelect())) {
+      response.setFlash("Please select an output format type");
+      return null;
+    }
+
+    File outputFile =
+        Beans.get(DocxReportTemplateService.class)
+            .createReport(Arrays.asList(objectId), printTemplate);
+    // String fileLink = PdfTool.getFileLinkFromPdfFile(outputFile, outputFile.getName());
+
+    return ActionView.define(I18n.get(printTemplate.getMetaModel().getName()))
+        .add("html", outputFile.getAbsolutePath())
         .map();
   }
 
